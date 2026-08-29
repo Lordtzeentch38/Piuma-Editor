@@ -1361,7 +1361,7 @@ body.zen-mode .zen-exit-btn { display: block; }
       <span class="env-badge" id="envBadge">Web</span>
     </div>
 
-    <input type="text" class="doc-title-input" id="docTitle" placeholder="Titolo documento..." aria-label="Titolo documento">
+    <input type="text" class="doc-title-input" id="docTitle" placeholder="Titolo documento..." aria-label="Titolo documento" data-tip="Titolo del documento · Clicca per modificare o rinominare">
 
     <!-- Switch a 3 modalità fluido con pillola animata -->
     <div class="view-modes" id="viewModes" data-current-mode="split" role="group" aria-label="Modalità di visualizzazione">
@@ -3092,6 +3092,7 @@ document.body.appendChild(globalTooltip);
 document.addEventListener("mouseover", e => {
   const target = e.target.closest("[data-tip]");
   if (target && target.getAttribute("data-tip")) {
+    if (document.activeElement === target && target.tagName === "INPUT") return;
     globalTooltip.textContent = target.getAttribute("data-tip");
     globalTooltip.classList.add("show");
 
@@ -3116,6 +3117,11 @@ document.addEventListener("mouseover", e => {
 });
 document.addEventListener("mouseout", e => {
   if (e.target.closest("[data-tip]")) {
+    globalTooltip.classList.remove("show");
+  }
+});
+document.addEventListener("focusin", e => {
+  if (e.target.hasAttribute && e.target.hasAttribute("data-tip")) {
     globalTooltip.classList.remove("show");
   }
 });
