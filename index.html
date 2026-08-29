@@ -2720,21 +2720,33 @@ function generateId() {
 
 function loadStorage() {
   try {
-    const rawDocs = localStorage.getItem(K_DOCS);
+    const rawDocs = localStorage.getItem(K_DOCS) || localStorage.getItem("piuma.documents");
     state.docs = rawDocs ? JSON.parse(rawDocs) : [];
-    state.activeDocId = localStorage.getItem(K_ACTIVE_ID);
+    if (!Array.isArray(state.docs)) state.docs = [];
+    state.activeDocId = localStorage.getItem(K_ACTIVE_ID) || localStorage.getItem("piuma.activeDocId");
     state.theme = localStorage.getItem(K_THEME) || "paper";
     state.goalWords = parseInt(localStorage.getItem(K_GOAL) || "500", 10);
     state.lang = localStorage.getItem(K_LANG) || "en";
   } catch (e) {
+    console.warn("Storage parse error, resetting state:", e);
     state.docs = [];
   }
+
+  // Sanitizzazione documenti per evitare crash
+  state.docs = state.docs.filter(d => d && typeof d === "object").map(d => ({
+    id: d.id || generateId(),
+    title: typeof d.title === "string" && d.title.trim() ? d.title : (state.lang === "en" ? "Untitled document" : "Documento senza titolo"),
+    content: typeof d.content === "string" ? d.content : "",
+    isWelcomeDoc: !!d.isWelcomeDoc || d.id === "doc_welcome" || (typeof d.title === "string" && d.title.includes("Piuma Pro")),
+    updatedAt: typeof d.updatedAt === "number" ? d.updatedAt : Date.now(),
+    filePath: d.filePath || null
+  }));
 
   if (state.docs.length === 0) {
     const isIt = state.lang === "it";
     const initialDoc = {
       id: "doc_welcome",
-      title: isIt ? "Benvenuto in Piuma Pro" : "Welcome to Piuma Pro",
+      title: isIt ? "Benvenuto in Piuma Pro 🪶" : "Welcome to Piuma Pro 🪶",
       content: isIt ? SAMPLE_DOC_IT : SAMPLE_DOC_EN,
       isWelcomeDoc: true,
       updatedAt: Date.now(),
@@ -2742,6 +2754,7 @@ function loadStorage() {
     };
     state.docs = [initialDoc];
     state.activeDocId = initialDoc.id;
+    saveStorage();
   } else if (!state.docs.find(d => d.id === state.activeDocId)) {
     state.activeDocId = state.docs[0].id;
   }
@@ -2835,22 +2848,33 @@ function duplicateDocument(id, e) {
 }
 
 function renderDocsList(filter = "") {
-  const q = filter.toLowerCase().trim();
-  const filtered = state.docs.filter(d => 
-    d.title.toLowerCase().includes(q) || d.content.toLowerCase().includes(q)
-  );
+  const q = (filter || "").toLowerCase().trim();
+  const filtered = (state.docs || []).filter(d => {
+    if (!d) return false;
+    const title = (d.title || "").toLowerCase();
+    const content = (d.content || "").toLowerCase();
+    return title.includes(q) || content.includes(q);
+  });
   const t = I18N[state.lang];
   const dateLocale = state.lang === "en" ? "en-US" : "it-IT";
 
+  if (!docsList) return;
+
+  if (filtered.length === 0 && state.docs.length > 0) {
+    docsList.innerHTML = `<div style="padding:16px 12px;font-size:12px;color:var(--text-low);text-align:center;font-style:italic;">${state.lang === "en" ? "No matching documents" : "Nessun documento trovato"}</div>`;
+    return;
+  }
+
   docsList.innerHTML = filtered.map(d => {
     const isActive = d.id === state.activeDocId;
-    const words = (d.content.match(/\S+/g) || []).length;
-    const dDate = new Date(d.updatedAt).toLocaleDateString(dateLocale, { day:"numeric", month:"short" });
+    const words = ((d.content || "").match(/\S+/g) || []).length;
+    const dDate = new Date(d.updatedAt || Date.now()).toLocaleDateString(dateLocale, { day: "numeric", month: "short" });
     const wordsLabel = t.wordsCount(words);
+    const titleText = d.title || (state.lang === "en" ? "Untitled" : "Senza titolo");
     return `
       <div class="doc-item ${isActive ? "active" : ""}" onclick="switchDocument('${d.id}')">
         <div class="doc-item-info">
-          <span class="doc-item-title">${escapeHtml(d.title || (state.lang === "en" ? "Untitled" : "Senza titolo"))}</span>
+          <span class="doc-item-title">${escapeHtml(titleText)}</span>
           <span class="doc-item-meta">${dDate} · ${wordsLabel} ${d.filePath ? "💾" : ""}</span>
         </div>
         <div class="doc-item-actions">
@@ -2864,8 +2888,9 @@ function renderDocsList(filter = "") {
 
 function loadActiveDocIntoUI() {
   const doc = getActiveDoc();
-  editor.value = doc.content;
-  docTitle.value = doc.title;
+  if (!doc) return;
+  editor.value = doc.content || "";
+  docTitle.value = doc.title || "";
   state.currentNativeFilePath = doc.filePath || null;
   filePathDisplay.textContent = doc.filePath ? doc.filePath : "";
   updateStats();
@@ -4127,14 +4152,20 @@ function showToast(msg) {
    INIZIALIZZAZIONE & EVENTI ELECTRON
    ================================================================== */
 (function init() {
+  // 1. Reset campo ricerca
+  if ($("searchDocs")) $("searchDocs").value = "";
+
+  // 2. Carica documenti e preferenze da localStorage
   loadStorage();
 
-  // Controlla ambiente
+  // 3. Inizializza subito l'UI con il documento attivo
+  loadActiveDocIntoUI();
+
+  // 4. Controlla ambiente Desktop / Web
   if (isDesktop) {
     $("envBadge").textContent = "Desktop";
     $("envBadge").title = "Piuma Desktop Nativo (Electron)";
 
-    // Ascolta protocollo piuma:// o file aperti con doppio click da Windows
     window.electronAPI.onProtocolOpen(url => {
       importDocFromUrlOrToken(url);
     });
@@ -4146,7 +4177,6 @@ function showToast(msg) {
     $("envBadge").textContent = "Web";
     $("envBadge").title = "Piuma Web App Online";
 
-    // Controlla hash nell'URL del browser
     if (window.location.hash) {
       const ok = importDocFromUrlOrToken(window.location.hash);
       if (ok) {
@@ -4155,11 +4185,17 @@ function showToast(msg) {
     }
   }
 
+  // 5. Applica tema e lingua (con UI già popolata)
   applyTheme(state.theme);
   applyLanguage(state.lang, true);
-  loadActiveDocIntoUI();
+
+  // 6. Renderizza lista documenti e imposta modalità
   renderDocsList();
   setViewMode("split");
+
+  // 7. Salvataggio di sicurezza prima della chiusura/refresh
+  window.addEventListener("beforeunload", saveCurrentDocImmediately);
+  window.addEventListener("pagehide", saveCurrentDocImmediately);
 })();
 </script>
 
