@@ -17,8 +17,8 @@
 
 <!-- Prism.js per evidenziazione sintassi codice -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 
 <!-- Mermaid.js per diagrammi e grafici -->
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
@@ -2991,17 +2991,31 @@ function renderMarkdownCustom(src) {
         if (block.lang === "mermaid") {
           out.push(`<div class="mermaid">${escapeHtml(block.code)}</div>`);
         } else {
+          let cleanLang = (block.lang || "text").trim().toLowerCase();
+          let langKey = cleanLang;
+          if (langKey === "js") langKey = "javascript";
+          else if (langKey === "ts") langKey = "typescript";
+          else if (langKey === "py") langKey = "python";
+          else if (langKey === "html" || langKey === "xml") langKey = "markup";
+          else if (langKey === "md") langKey = "markdown";
+          else if (langKey === "sh" || langKey === "bash") langKey = "bash";
+          else if (langKey === "css") langKey = "css";
+          else if (langKey === "json") langKey = "json";
+          
           let highlighted = escapeHtml(block.code);
-          if (window.hljs && block.lang && hljs.getLanguage(block.lang)) {
+          if (window.Prism && Prism.languages && Prism.languages[langKey]) {
             try {
-              highlighted = hljs.highlight(block.code, { language: block.lang, ignoreIllegals: true }).value;
+              highlighted = Prism.highlight(block.code, Prism.languages[langKey], langKey);
             } catch (err) {}
           }
+
           out.push(`
-            <div class="code-wrap">
-              <span class="code-lang">${escapeHtml(block.lang || "text")}</span>
-              <button class="code-copy-btn" onclick="copyCodeBlock(this)">${t.copyBtnLabel}</button>
-              <pre><code class="hljs language-${escapeHtml(block.lang)}">${highlighted}</code></pre>
+            <div class="code-block-wrapper">
+              <div class="code-block-header">
+                <span>${escapeHtml(cleanLang || "code")}</span>
+                <button class="copy-code-btn" onclick="copyCodeBlock(this)">${t.copyBtnLabel}</button>
+              </div>
+              <pre><code class="language-${escapeHtml(langKey)}">${highlighted}</code></pre>
             </div>
           `);
         }
@@ -3181,6 +3195,13 @@ function renderPreview() {
   if (state.mode === "write") return;
   preview.innerHTML = renderMarkdownCustom(editor.value);
 
+  // Inizializza Syntax Highlighting con Prism
+  if (window.Prism) {
+    try {
+      Prism.highlightAllUnder(preview);
+    } catch (e) {}
+  }
+
   // Inizializza Diagrammi Mermaid
   if (window.mermaid) {
     try {
@@ -3191,7 +3212,9 @@ function renderPreview() {
 
 // Copia codice blocco
 window.copyCodeBlock = function(btn) {
-  const code = btn.nextElementSibling.innerText;
+  const wrapper = btn.closest(".code-block-wrapper");
+  const codeEl = wrapper ? wrapper.querySelector("pre code") : null;
+  const code = codeEl ? codeEl.innerText : (btn.nextElementSibling ? btn.nextElementSibling.innerText : "");
   const t = I18N[state.lang];
   navigator.clipboard.writeText(code).then(() => {
     btn.textContent = t.copiedBtnLabel;
