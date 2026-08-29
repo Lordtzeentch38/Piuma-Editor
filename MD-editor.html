@@ -313,7 +313,8 @@ button { cursor: pointer; border: none; background: none; }
   border-bottom: 1px solid var(--line);
   background: var(--bg-surface);
   flex-shrink: 0;
-  z-index: 25;
+  position: relative;
+  z-index: 80;
 }
 
 /* Brand Logo con animazione hover e link GitHub */
@@ -550,7 +551,7 @@ button { cursor: pointer; border: none; background: none; }
   box-shadow: 0 10px 24px rgba(0,0,0,0.6);
   z-index: 300;
 }
-.icon-btn:hover, .mode-btn:hover { z-index: 100; }
+.icon-btn:hover, .mode-btn:hover, .brand-wrap:hover, .tb-btn:hover { z-index: 120; }
 .tb-btn:hover::after, .icon-btn:hover::after, .brand-wrap:hover::after, .doc-btn[data-tip]:hover::after, .goal-badge:hover::after, .mode-btn[data-tip]:hover::after {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
@@ -567,6 +568,7 @@ button { cursor: pointer; border: none; background: none; }
   padding: 12px 16px;
   gap: 14px;
   overflow: hidden;
+  z-index: 10;
 }
 
 /* Pannello Editor */
