@@ -1276,12 +1276,12 @@ body.zen-mode .zen-exit-btn { display: block; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 /* ==================================================================
-   PRINT & PDF EXPORT STYLES (100% VISIBLE & PAGINATED)
+   PRINT & PDF EXPORT STYLES (PROFESSIONAL BOOK/MANUAL LAYOUT)
    ================================================================== */
 @media print {
   @page {
-    margin: 15mm 15mm 15mm 15mm;
-    size: auto;
+    size: A4;
+    margin: 20mm 20mm 20mm 20mm;
   }
 
   /* Reset layout constraints for printing */
@@ -1294,7 +1294,9 @@ body.zen-mode .zen-exit-btn { display: block; }
     color: #111827 !important;
     margin: 0 !important;
     padding: 0 !important;
-    font-size: 12pt !important;
+    font-size: 11pt !important;
+    line-height: 1.75 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
@@ -1334,7 +1336,7 @@ body.zen-mode .zen-exit-btn { display: block; }
     transform: none !important;
   }
 
-  /* Always force preview container to be visible, fully expanded and 100% opaque */
+  /* Preview Container con margini di lettura eleganti e rilegatura */
   .pane-preview, #panePreview {
     display: block !important;
     position: static !important;
@@ -1346,15 +1348,16 @@ body.zen-mode .zen-exit-btn { display: block; }
     overflow: visible !important;
     opacity: 1 !important;
     transform: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
+    padding: 4mm 8mm !important;
+    margin: 0 auto !important;
     border: none !important;
     box-shadow: none !important;
     background: #ffffff !important;
     pointer-events: auto !important;
+    box-sizing: border-box !important;
   }
 
-  /* Target rendered prose text */
+  /* Rendered Prose Content */
   .prose, #previewContent {
     display: block !important;
     width: 100% !important;
@@ -1363,73 +1366,194 @@ body.zen-mode .zen-exit-btn { display: block; }
     padding: 0 !important;
     opacity: 1 !important;
     transform: none !important;
-    color: #111827 !important;
+    color: #1e293b !important;
     background: transparent !important;
     font-size: 11pt !important;
-    line-height: 1.6 !important;
+    line-height: 1.75 !important;
+    box-sizing: border-box !important;
   }
 
+  /* Headings tipografici per libri e manuali */
   .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
     page-break-after: avoid;
     break-after: avoid;
-    color: #000000 !important;
+    font-family: Georgia, "Times New Roman", serif !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
   }
 
-  .prose h1 { font-size: 1.8rem !important; border-bottom: 2px solid #e2e8f0 !important; margin-top: 0 !important; }
-  .prose h2 { font-size: 1.35rem !important; border-bottom: 1px solid #e2e8f0 !important; }
-  .prose h3 { font-size: 1.15rem !important; }
-
-  .prose p, .prose li {
-    color: #1f2937 !important;
+  .prose h1 {
+    font-size: 24pt !important;
+    line-height: 1.25 !important;
+    border-bottom: 2px solid #cbd5e1 !important;
+    margin-top: 0 !important;
+    margin-bottom: 18pt !important;
+    padding-bottom: 8pt !important;
   }
 
+  .prose h2 {
+    font-size: 17pt !important;
+    line-height: 1.3 !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    margin-top: 24pt !important;
+    margin-bottom: 12pt !important;
+    padding-bottom: 4pt !important;
+  }
+
+  .prose h3 {
+    font-size: 13.5pt !important;
+    line-height: 1.35 !important;
+    margin-top: 18pt !important;
+    margin-bottom: 8pt !important;
+  }
+
+  .prose p {
+    margin-top: 0 !important;
+    margin-bottom: 12pt !important;
+    color: #1e293b !important;
+    text-align: justify !important;
+    text-justify: inter-word !important;
+  }
+
+  .prose ul, .prose ol {
+    margin-top: 0 !important;
+    margin-bottom: 14pt !important;
+    padding-left: 22pt !important;
+  }
+
+  .prose li {
+    margin-bottom: 5pt !important;
+    color: #1e293b !important;
+  }
+
+  /* Checklist interattive in stampa */
+  .prose .task-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    list-style: none !important;
+  }
+  .prose .task-item input[type="checkbox"] {
+    width: 14px !important;
+    height: 14px !important;
+    margin: 0 !important;
+  }
+
+  /* Blocchi di Codice */
   .prose pre, 
-  .prose blockquote, 
-  .prose table, 
-  .prose .callout, 
-  .prose .mermaid,
-  .prose .math-block,
-  .code-wrap {
-    page-break-inside: avoid;
-    break-inside: avoid;
+  .prose .code-wrap {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
     box-shadow: none !important;
+    border-radius: 6px !important;
+    margin: 14pt 0 !important;
   }
 
   .prose pre {
     background: #f8fafc !important;
     color: #0f172a !important;
     border: 1px solid #cbd5e1 !important;
+    padding: 10pt 12pt !important;
+    font-size: 9.5pt !important;
+    line-height: 1.5 !important;
     white-space: pre-wrap !important;
-    word-break: break-all !important;
+    word-break: break-word !important;
+    font-family: Consolas, Monaco, "Courier New", monospace !important;
+  }
+
+  .prose code:not(pre code) {
+    font-family: Consolas, Monaco, "Courier New", monospace !important;
+    font-size: 0.9em !important;
+    padding: 2px 5px !important;
+    border-radius: 4px !important;
+    background: #f1f5f9 !important;
+    color: #c2410c !important;
+    border: 1px solid #e2e8f0 !important;
   }
 
   .code-copy-btn, .code-lang {
     display: none !important;
   }
 
+  /* Citazioni & Blockquote */
   .prose blockquote {
-    border-left: 4px solid #f97316 !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    border-left: 4px solid #ea580c !important;
     background: #fff7ed !important;
+    padding: 8pt 14pt !important;
+    margin: 14pt 0 !important;
     color: #334155 !important;
+    border-radius: 0 6px 6px 0 !important;
   }
 
+  /* Callout box GitHub style */
+  .prose .callout {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    padding: 10pt 14pt !important;
+    margin: 14pt 0 !important;
+    border-radius: 6px !important;
+    border-left: 5px solid !important;
+  }
+  .prose .callout-note { border-color: #2563eb !important; background: #eff6ff !important; color: #1e3a8a !important; }
+  .prose .callout-tip { border-color: #059669 !important; background: #ecfdf5 !important; color: #064e3b !important; }
+  .prose .callout-warning { border-color: #d97706 !important; background: #fffbeb !important; color: #78350f !important; }
+  .prose .callout-caution { border-color: #dc2626 !important; background: #fef2f2 !important; color: #7f1d1d !important; }
+  .prose .callout-important { border-color: #7c3aed !important; background: #f5f3ff !important; color: #4c1d95 !important; }
+
+  /* Tabelle */
   .prose table {
     width: 100% !important;
     border-collapse: collapse !important;
+    margin: 16pt 0 !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 
   .prose th, .prose td {
     border: 1px solid #cbd5e1 !important;
-    padding: 8px 10px !important;
+    padding: 7pt 10pt !important;
     color: #1e293b !important;
+    font-size: 10pt !important;
   }
 
   .prose th {
     background: #f1f5f9 !important;
+    font-weight: 700 !important;
+  }
+
+  /* Formule KaTeX */
+  .prose .math-block {
+    margin: 14pt 0 !important;
+    text-align: center !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Diagrammi Mermaid */
+  .prose .mermaid {
+    margin: 16pt auto !important;
+    text-align: center !important;
+    max-width: 100% !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .prose .mermaid svg {
+    max-width: 90% !important;
+    height: auto !important;
+    margin: 0 auto !important;
+  }
+
+  .prose hr {
+    border: none !important;
+    border-top: 1px solid #cbd5e1 !important;
+    margin: 20pt 0 !important;
   }
 
   .prose a {
-    color: #2563eb !important;
+    color: #1d4ed8 !important;
     text-decoration: underline !important;
   }
 }
