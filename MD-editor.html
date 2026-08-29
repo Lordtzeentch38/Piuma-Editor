@@ -3556,7 +3556,7 @@ docTitle.addEventListener("input", () => {
 ["keyup", "click", "select", "focus"].forEach(ev => editor.addEventListener(ev, updateStats));
 
 /* ==================================================================
-   TROVA E SOSTITUISCI (FIND & REPLACE) CON AUTO-SCROLL & FOCUS PERSISTENTE
+   TROVA E SOSTITUISCI (FIND & REPLACE) CON AUTO-SCROLL & HIGHLIGHT
    ================================================================== */
 const frBar = $("findReplaceBar");
 const frFindInput = $("frFindInput");
@@ -3597,7 +3597,7 @@ function highlightCurrentMatch(shouldFocusEditor) {
   const end = start + frFindInput.value.length;
   const t = I18N[state.lang];
 
-  // 1. Evidenzia selezione
+  // 1. Evidenzia selezione nell'editor
   if (shouldFocusEditor) {
     editor.focus();
   }
@@ -3633,20 +3633,21 @@ frFindInput.addEventListener("keydown", function(e) {
     } else {
       frCurrentIdx = (frCurrentIdx + 1) % frMatches.length;
     }
-    highlightCurrentMatch(false);
+    highlightCurrentMatch(true);
+    frFindInput.focus();
   }
 });
 
 $("frNextBtn").addEventListener("click", function() {
   if (frMatches.length === 0) return;
   frCurrentIdx = (frCurrentIdx + 1) % frMatches.length;
-  highlightCurrentMatch(false);
+  highlightCurrentMatch(true);
 });
 
 $("frPrevBtn").addEventListener("click", function() {
   if (frMatches.length === 0) return;
   frCurrentIdx = (frCurrentIdx - 1 + frMatches.length) % frMatches.length;
-  highlightCurrentMatch(false);
+  highlightCurrentMatch(true);
 });
 
 $("frReplaceBtn").addEventListener("click", function() {
@@ -3680,6 +3681,72 @@ $("btnFindToggle").addEventListener("click", function() {
       findOccurrences(true);
     }
   }
+});
+
+/* ==================================================================
+   MODALITÀ DI VISUALIZZAZIONE & ZEN MODE CON TRANSIZIONI FLUIDE
+   ================================================================== */
+function setViewMode(mode) {
+  if (!mode) mode = "split";
+  state.mode = mode;
+  stage.className = `stage mode-${mode}`;
+  const viewModesEl = $("viewModes");
+  if (viewModesEl) viewModesEl.setAttribute("data-current-mode", mode);
+
+  document.querySelectorAll(".view-modes .mode-btn").forEach(b => {
+    const isActive = b.dataset.mode === mode;
+    b.classList.toggle("active", isActive);
+    b.setAttribute("aria-pressed", isActive ? "true" : "false");
+  });
+
+  if (mode === "read" || mode === "split") {
+    renderPreview();
+  }
+  if (mode === "write") {
+    editor.focus();
+  }
+}
+
+document.querySelectorAll(".view-modes .mode-btn").forEach(b => {
+  b.addEventListener("click", function() {
+    setViewMode(b.dataset.mode);
+  });
+});
+
+function toggleZenMode() {
+  state.isZen = !state.isZen;
+  document.body.classList.toggle("zen-mode", state.isZen);
+  if (state.isZen) {
+    const t = I18N[state.lang];
+    showToast(t.zenToast);
+  }
+}
+
+$("btnZenToggle").addEventListener("click", toggleZenMode);
+$("btnExitZen").addEventListener("click", toggleZenMode);
+
+/* ==================================================================
+   GESTIONE TEMI
+   ================================================================== */
+function applyTheme(t) {
+  state.theme = t || "paper";
+  document.documentElement.setAttribute("data-theme", state.theme);
+  localStorage.setItem(K_THEME, state.theme);
+  document.querySelectorAll("[data-set-theme]").forEach(b => {
+    b.classList.toggle("active", b.dataset.setTheme === state.theme);
+  });
+}
+
+document.querySelectorAll("[data-set-theme]").forEach(b => {
+  b.addEventListener("click", function() {
+    applyTheme(b.dataset.setTheme);
+    $("themeDropdown").classList.remove("show");
+  });
+});
+
+$("btnThemeMenu").addEventListener("click", function(e) {
+  e.stopPropagation();
+  $("themeDropdown").classList.toggle("show");
 });
 
 /* ==================================================================
