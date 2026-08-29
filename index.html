@@ -3084,7 +3084,7 @@ $("btnToggleSidebar").addEventListener("click", () => {
 });
 $("btnNewDoc").addEventListener("click", () => createNewDocument());
 
-/* Global Tooltip Engine */
+/* Global Tooltip Engine (con rilevamento automatico dei bordi dello schermo) */
 const globalTooltip = document.createElement("div");
 globalTooltip.className = "global-tooltip";
 document.body.appendChild(globalTooltip);
@@ -3093,10 +3093,25 @@ document.addEventListener("mouseover", e => {
   const target = e.target.closest("[data-tip]");
   if (target && target.getAttribute("data-tip")) {
     globalTooltip.textContent = target.getAttribute("data-tip");
-    const rect = target.getBoundingClientRect();
-    globalTooltip.style.top = (rect.bottom + 8) + "px";
-    globalTooltip.style.left = (rect.left + rect.width / 2) + "px";
     globalTooltip.classList.add("show");
+
+    const rect = target.getBoundingClientRect();
+    const tipWidth = globalTooltip.offsetWidth;
+    const padding = 12;
+
+    let left = rect.left + rect.width / 2;
+
+    // Evita che il tooltip esca dal bordo destro dello schermo
+    if (left + tipWidth / 2 > window.innerWidth - padding) {
+      left = window.innerWidth - padding - tipWidth / 2;
+    }
+    // Evita che il tooltip esca dal bordo sinistro
+    if (left - tipWidth / 2 < padding) {
+      left = padding + tipWidth / 2;
+    }
+
+    globalTooltip.style.top = (rect.bottom + 8) + "px";
+    globalTooltip.style.left = left + "px";
   }
 });
 document.addEventListener("mouseout", e => {
