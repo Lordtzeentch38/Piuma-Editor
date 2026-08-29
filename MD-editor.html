@@ -1275,14 +1275,163 @@ body.zen-mode .zen-exit-btn { display: block; }
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* Print styling */
+/* ==================================================================
+   PRINT & PDF EXPORT STYLES (100% VISIBLE & PAGINATED)
+   ================================================================== */
 @media print {
-  .topbar, .toolbar-wrap, .statusbar, .sidebar, .split-divider, .pane-editor, .zen-exit-btn, .ambient, .find-replace-bar, .toc-panel, .modal-overlay {
+  @page {
+    margin: 15mm 15mm 15mm 15mm;
+    size: auto;
+  }
+
+  /* Reset layout constraints for printing */
+  html, body {
+    width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+    color: #111827 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 12pt !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide all UI Chrome completely */
+  .topbar, 
+  .toolbar-wrap, 
+  .statusbar, 
+  .sidebar, 
+  .split-divider, 
+  .pane-editor, 
+  .zen-exit-btn, 
+  .ambient, 
+  .find-replace-bar, 
+  .toc-panel, 
+  .modal-overlay, 
+  .global-tooltip, 
+  .dropdown-menu,
+  .toast {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  /* Reset App Main Container */
+  .app, #appMain, .stage {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    transform: none !important;
+  }
+
+  /* Always force preview container to be visible, fully expanded and 100% opaque */
+  .pane-preview, #panePreview {
+    display: block !important;
+    position: static !important;
+    flex: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    opacity: 1 !important;
+    transform: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    pointer-events: auto !important;
+  }
+
+  /* Target rendered prose text */
+  .prose, #previewContent {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    opacity: 1 !important;
+    transform: none !important;
+    color: #111827 !important;
+    background: transparent !important;
+    font-size: 11pt !important;
+    line-height: 1.6 !important;
+  }
+
+  .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+    page-break-after: avoid;
+    break-after: avoid;
+    color: #000000 !important;
+  }
+
+  .prose h1 { font-size: 1.8rem !important; border-bottom: 2px solid #e2e8f0 !important; margin-top: 0 !important; }
+  .prose h2 { font-size: 1.35rem !important; border-bottom: 1px solid #e2e8f0 !important; }
+  .prose h3 { font-size: 1.15rem !important; }
+
+  .prose p, .prose li {
+    color: #1f2937 !important;
+  }
+
+  .prose pre, 
+  .prose blockquote, 
+  .prose table, 
+  .prose .callout, 
+  .prose .mermaid,
+  .prose .math-block,
+  .code-wrap {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    box-shadow: none !important;
+  }
+
+  .prose pre {
+    background: #f8fafc !important;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1 !important;
+    white-space: pre-wrap !important;
+    word-break: break-all !important;
+  }
+
+  .code-copy-btn, .code-lang {
     display: none !important;
   }
-  body { background: #fff !important; color: #000 !important; overflow: visible !important; height: auto !important; }
-  .app, .stage, .pane-preview { height: auto !important; overflow: visible !important; padding: 0 !important; border: none !important; box-shadow: none !important; }
-  .prose { max-width: 100% !important; font-size: 12pt !important; }
+
+  .prose blockquote {
+    border-left: 4px solid #f97316 !important;
+    background: #fff7ed !important;
+    color: #334155 !important;
+  }
+
+  .prose table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  .prose th, .prose td {
+    border: 1px solid #cbd5e1 !important;
+    padding: 8px 10px !important;
+    color: #1e293b !important;
+  }
+
+  .prose th {
+    background: #f1f5f9 !important;
+  }
+
+  .prose a {
+    color: #2563eb !important;
+    text-decoration: underline !important;
+  }
 }
 
 @media (max-width: 768px) {
@@ -3488,7 +3637,10 @@ $("actDownloadHtml").addEventListener("click", () => {
 // 3. Stampa / PDF
 $("actPrintPdf").addEventListener("click", () => {
   renderPreview();
-  window.print();
+  $("exportDropdown").classList.remove("show");
+  setTimeout(() => {
+    window.print();
+  }, 100);
 });
 
 // 4. Copia Markdown
