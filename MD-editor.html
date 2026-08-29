@@ -171,17 +171,21 @@ button { cursor: pointer; border: none; background: none; }
    ================================================================== */
 .sidebar {
   width: 290px;
+  min-width: 290px;
   background: var(--bg-surface);
   border-right: 1px solid var(--line);
   display: flex;
   flex-direction: column;
   position: relative;
-  z-index: 40;
-  transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1), margin-left 0.35s ease;
+  z-index: 90;
+  transition: margin-left 0.3s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.25s ease;
   flex-shrink: 0;
 }
 .sidebar.collapsed {
   margin-left: -290px;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
 }
 .sb-header {
   padding: 16px 18px 12px;
@@ -294,28 +298,33 @@ button { cursor: pointer; border: none; background: none; }
    APP MAIN LAYOUT
    ================================================================== */
 .app {
-  flex: 1;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   height: 100vh;
+  width: 100%;
+  max-width: 100vw;
   position: relative;
   z-index: 1;
   min-width: 0;
+  overflow: hidden;
 }
 
 /* ---- Topbar ---- */
 .topbar {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   height: 60px;
   padding: 0 16px;
   border-bottom: 1px solid var(--line);
   background: var(--bg-surface);
   flex-shrink: 0;
+  width: 100%;
   position: relative;
   z-index: 80;
 }
+#btnToggleSidebar { flex-shrink: 0; }
 
 /* Brand Logo con animazione hover e link GitHub */
 .brand-wrap {
@@ -327,6 +336,7 @@ button { cursor: pointer; border: none; background: none; }
   position: relative;
   text-decoration: none;
   color: inherit;
+  flex-shrink: 0;
 }
 .brand-chip {
   width: 34px;
@@ -357,8 +367,8 @@ button { cursor: pointer; border: none; background: none; }
 }
 
 .doc-title-input {
-  flex: 1;
-  min-width: 100px;
+  flex: 1 1 80px;
+  min-width: 60px;
   background: transparent;
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
@@ -395,6 +405,7 @@ button { cursor: pointer; border: none; background: none; }
   border-radius: 999px;
   border: 1px solid var(--line);
   user-select: none;
+  flex-shrink: 0;
 }
 .mode-thumb {
   position: absolute;
@@ -439,6 +450,7 @@ button { cursor: pointer; border: none; background: none; }
   display: flex;
   align-items: center;
   gap: 5px;
+  flex-shrink: 0;
 }
 .icon-btn {
   width: 34px;
@@ -468,7 +480,7 @@ button { cursor: pointer; border: none; background: none; }
   display: none;
   flex-direction: column;
   min-width: 220px;
-  z-index: 100;
+  z-index: 200;
 }
 .dropdown-menu.show { display: flex; animation: slideDown 0.18s ease; }
 @keyframes slideDown { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:none} }
@@ -501,10 +513,13 @@ button { cursor: pointer; border: none; background: none; }
   padding: 0 16px;
   gap: 4px;
   flex-shrink: 0;
-  overflow: visible;
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
   position: relative;
   z-index: 60;
 }
+.toolbar-wrap::-webkit-scrollbar { display: none; }
 .tb-btn {
   height: 32px;
   min-width: 32px;
@@ -517,8 +532,9 @@ button { cursor: pointer; border: none; background: none; }
   font-size: 13px;
   transition: 0.15s;
   position: relative;
+  flex-shrink: 0;
 }
-.tb-btn:hover { color: var(--text-hi); background: var(--bg-surface-2); z-index: 100; }
+.tb-btn:hover { color: var(--text-hi); background: var(--bg-surface-2); }
 .tb-btn svg { width: 16px; height: 16px; }
 .tb-btn .tg { font-weight: 800; font-size: 13px; }
 .tb-btn .ti { font-style: italic; font-family: var(--font-display); font-size: 15px; }
@@ -527,32 +543,29 @@ button { cursor: pointer; border: none; background: none; }
 .tb-sep { width: 1px; height: 20px; background: var(--line); margin: 0 4px; flex-shrink: 0; }
 
 /* ==================================================================
-   TOOLTIP UNIVERSALI - POSIZIONATI IN BASSO SOTTO I PULSANTI
+   TOOLTIP GLOBALE ELEGANTE (POSIZIONATO SEMPRE IN BASSO, MAI TAGLIATO)
    ================================================================== */
-.tb-btn::after, .icon-btn::after, .brand-wrap::after, .doc-btn[data-tip]::after, .goal-badge::after, .mode-btn[data-tip]::after {
-  content: attr(data-tip);
-  position: absolute;
-  left: 50%;
-  top: calc(100% + 8px);
-  bottom: auto;
+.global-tooltip {
+  position: fixed;
+  top: 0;
+  left: 0;
   transform: translateX(-50%) translateY(-4px);
   background: #060c0e;
   border: 1px solid var(--line-strong);
   color: var(--text-hi);
-  font-size: 11px;
+  font-size: 11.5px;
   font-family: var(--font-ui);
   font-weight: 600;
-  padding: 5px 9px;
+  padding: 5px 10px;
   border-radius: 6px;
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.18s ease 0.1s, transform 0.18s ease 0.1s;
-  box-shadow: 0 10px 24px rgba(0,0,0,0.6);
-  z-index: 300;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.65);
+  z-index: 9999;
 }
-.icon-btn:hover, .mode-btn:hover, .brand-wrap:hover, .tb-btn:hover { z-index: 120; }
-.tb-btn:hover::after, .icon-btn:hover::after, .brand-wrap:hover::after, .doc-btn[data-tip]:hover::after, .goal-badge:hover::after, .mode-btn[data-tip]:hover::after {
+.global-tooltip.show {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
@@ -3058,12 +3071,41 @@ $("backupFileInput").addEventListener("change", e => {
 });
 
 /* ==================================================================
-   TOC OUTLINE & SIDEBAR TOGGLES
+   TOC OUTLINE, SIDEBAR TOGGLES & GLOBAL TOOLTIPS
    ================================================================== */
 $("btnTocToggle").addEventListener("click", () => $("tocPanel").classList.toggle("show"));
 $("tocCloseBtn").addEventListener("click", () => $("tocPanel").classList.remove("show"));
-$("btnToggleSidebar").addEventListener("click", () => sidebar.classList.toggle("collapsed"));
+$("btnToggleSidebar").addEventListener("click", () => {
+  sidebar.classList.toggle("collapsed");
+  window.scrollTo(0, 0);
+  document.body.scrollLeft = 0;
+  document.documentElement.scrollLeft = 0;
+  if ($("appMain")) $("appMain").scrollLeft = 0;
+});
 $("btnNewDoc").addEventListener("click", () => createNewDocument());
+
+/* Global Tooltip Engine */
+const globalTooltip = document.createElement("div");
+globalTooltip.className = "global-tooltip";
+document.body.appendChild(globalTooltip);
+
+document.addEventListener("mouseover", e => {
+  const target = e.target.closest("[data-tip]");
+  if (target && target.getAttribute("data-tip")) {
+    globalTooltip.textContent = target.getAttribute("data-tip");
+    const rect = target.getBoundingClientRect();
+    globalTooltip.style.top = (rect.bottom + 8) + "px";
+    globalTooltip.style.left = (rect.left + rect.width / 2) + "px";
+    globalTooltip.classList.add("show");
+  }
+});
+document.addEventListener("mouseout", e => {
+  if (e.target.closest("[data-tip]")) {
+    globalTooltip.classList.remove("show");
+  }
+});
+document.addEventListener("mousedown", () => globalTooltip.classList.remove("show"));
+window.addEventListener("scroll", () => globalTooltip.classList.remove("show"), true);
 
 $("searchDocs").addEventListener("input", e => renderDocsList(e.target.value));
 
