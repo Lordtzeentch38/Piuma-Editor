@@ -2074,6 +2074,8 @@ const I18N = {
     replacePlaceholder: "Replace with...",
     replaceBtn: "Replace",
     replaceAllBtn: "All",
+    replaceBtnTip: "Replace current match",
+    replaceAllBtnTip: "Replace all matches",
     prevMatchTip: "Previous (Shift+F3)",
     nextMatchTip: "Next (F3)",
     closeFrTip: "Close bar",
@@ -2221,6 +2223,8 @@ const I18N = {
     replacePlaceholder: "Sostituisci con...",
     replaceBtn: "Sostituisci",
     replaceAllBtn: "Tutto",
+    replaceBtnTip: "Sostituisci occorrenza attuale",
+    replaceAllBtnTip: "Sostituisci tutte le occorrenze",
     prevMatchTip: "Precedente (Shift+F3)",
     nextMatchTip: "Successivo (F3)",
     closeFrTip: "Chiudi barra",
@@ -2662,7 +2666,9 @@ function applyLanguage(lang, isInitial = false) {
   $("frFindInput").placeholder = t.findPlaceholder;
   $("frReplaceInput").placeholder = t.replacePlaceholder;
   $("frReplaceBtn").textContent = t.replaceBtn;
+  $("frReplaceBtn").setAttribute("data-tip", t.replaceBtnTip);
   $("frReplaceAllBtn").textContent = t.replaceAllBtn;
+  $("frReplaceAllBtn").setAttribute("data-tip", t.replaceAllBtnTip);
   $("frPrevBtn").setAttribute("data-tip", t.prevMatchTip);
   $("frNextBtn").setAttribute("data-tip", t.nextMatchTip);
   $("frCloseBtn").setAttribute("data-tip", t.closeFrTip);
@@ -3525,7 +3531,7 @@ docTitle.addEventListener("input", () => {
 ["keyup", "click", "select", "focus"].forEach(ev => editor.addEventListener(ev, updateStats));
 
 /* ==================================================================
-   TROVA E SOSTITUISCI (FIND & REPLACE)
+   TROVA E SOSTITUISCI (FIND & REPLACE) CON AUTO-SCROLL & FOCUS PERSISTENTE
    ================================================================== */
 const frBar = $("findReplaceBar");
 const frFindInput = $("frFindInput");
@@ -3534,7 +3540,7 @@ const frCount = $("frCount");
 let frMatches = [];
 let frCurrentIdx = -1;
 
-function findOccurrences() {
+function findOccurrences(isTyping) {
   const q = frFindInput.value;
   const t = I18N[state.lang];
   frMatches = [];
@@ -3554,126 +3560,101 @@ function findOccurrences() {
 
   if (frMatches.length > 0) {
     frCurrentIdx = 0;
-    highlightCurrentMatch();
+    highlightCurrentMatch(!isTyping);
+  } else {
+    frCount.textContent = t.replaceCount(0, 0);
   }
-  frCount.textContent = frMatches.length > 0 ? t.replaceCount(frCurrentIdx + 1, frMatches.length) : t.replaceCount(0, 0);
 }
 
-function highlightCurrentMatch() {
+function highlightCurrentMatch(shouldFocusEditor) {
   if (frCurrentIdx < 0 || frCurrentIdx >= frMatches.length) return;
   const start = frMatches[frCurrentIdx];
   const end = start + frFindInput.value.length;
   const t = I18N[state.lang];
-  editor.focus();
+
+  // 1. Evidenzia selezione
+  if (shouldFocusEditor) {
+    editor.focus();
+  }
   editor.setSelectionRange(start, end);
   frCount.textContent = t.replaceCount(frCurrentIdx + 1, frMatches.length);
+
+  // 2. Scroll fluido dell'Editor fino all'occorrenza
+  const textUpToMatch = editor.value.substring(0, start);
+  const lineNum = textUpToMatch.split("\n").length - 1;
+  const totalLines = editor.value.split("\n").length || 1;
+  const avgLineHeight = editor.scrollHeight / totalLines;
+  const targetTop = Math.max(0, (lineNum * avgLineHeight) - (editor.clientHeight / 3));
+  editor.scrollTo({ top: targetTop, behavior: "smooth" });
+
+  // 3. Scroll fluido sincronizzato dell'Anteprima di Lettura
+  if (state.mode === "split" || state.mode === "read") {
+    const ratio = targetTop / (editor.scrollHeight - editor.clientHeight || 1);
+    panePreview.scrollTo({
+      top: ratio * (panePreview.scrollHeight - panePreview.clientHeight || 1),
+      behavior: "smooth"
+    });
+  }
 }
 
-frFindInput.addEventListener("input", findOccurrences);
+frFindInput.addEventListener("input", function() { findOccurrences(true); });
 
-$("frNextBtn").addEventListener("click", () => {
+frFindInput.addEventListener("keydown", function(e) {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    if (frMatches.length === 0) return;
+    if (e.shiftKey) {
+      frCurrentIdx = (frCurrentIdx - 1 + frMatches.length) % frMatches.length;
+    } else {
+      frCurrentIdx = (frCurrentIdx + 1) % frMatches.length;
+    }
+    highlightCurrentMatch(false);
+  }
+});
+
+$("frNextBtn").addEventListener("click", function() {
   if (frMatches.length === 0) return;
   frCurrentIdx = (frCurrentIdx + 1) % frMatches.length;
-  highlightCurrentMatch();
+  highlightCurrentMatch(false);
 });
 
-$("frPrevBtn").addEventListener("click", () => {
+$("frPrevBtn").addEventListener("click", function() {
   if (frMatches.length === 0) return;
   frCurrentIdx = (frCurrentIdx - 1 + frMatches.length) % frMatches.length;
-  highlightCurrentMatch();
+  highlightCurrentMatch(false);
 });
 
-$("frReplaceBtn").addEventListener("click", () => {
+$("frReplaceBtn").addEventListener("click", function() {
   if (frCurrentIdx < 0 || frMatches.length === 0) return;
   const start = frMatches[frCurrentIdx];
   const end = start + frFindInput.value.length;
   editor.setSelectionRange(start, end);
   document.execCommand("insertText", false, frReplaceInput.value);
   handleEditorInput();
-  findOccurrences();
+  findOccurrences(true);
 });
 
-$("frReplaceAllBtn").addEventListener("click", () => {
+$("frReplaceAllBtn").addEventListener("click", function() {
   if (!frFindInput.value) return;
-  const regex = new RegExp(frFindInput.value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi");
+  const escapedQuery = frFindInput.value.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
+  const regex = new RegExp(escapedQuery, "gi");
   editor.value = editor.value.replace(regex, frReplaceInput.value);
   handleEditorInput();
-  findOccurrences();
+  findOccurrences(true);
   const t = I18N[state.lang];
   showToast(t.replaceCompleteToast);
 });
 
-$("frCloseBtn").addEventListener("click", () => frBar.classList.remove("show"));
-$("btnFindToggle").addEventListener("click", () => {
+$("frCloseBtn").addEventListener("click", function() { frBar.classList.remove("show"); });
+$("btnFindToggle").addEventListener("click", function() {
   frBar.classList.toggle("show");
   if (frBar.classList.contains("show")) {
     frFindInput.focus();
     frFindInput.select();
+    if (frFindInput.value) {
+      findOccurrences(true);
+    }
   }
-});
-
-/* ==================================================================
-   MODALITÀ DI VISUALIZZAZIONE & ZEN MODE CON TRANSIZIONI FLUIDE
-   ================================================================== */
-function setViewMode(mode) {
-  if (state.mode === mode) return;
-  state.mode = mode;
-  stage.className = `stage mode-${mode}`;
-  const viewModesEl = $("viewModes");
-  if (viewModesEl) viewModesEl.setAttribute("data-current-mode", mode);
-
-  document.querySelectorAll(".view-modes .mode-btn").forEach(b => {
-    const isActive = b.dataset.mode === mode;
-    b.classList.toggle("active", isActive);
-    b.setAttribute("aria-pressed", isActive ? "true" : "false");
-  });
-
-  if (mode === "read" || mode === "split") {
-    renderPreview();
-  }
-  if (mode === "write") {
-    editor.focus();
-  }
-}
-
-document.querySelectorAll(".view-modes .mode-btn").forEach(b => {
-  b.addEventListener("click", () => setViewMode(b.dataset.mode));
-});
-
-function toggleZenMode() {
-  state.isZen = !state.isZen;
-  document.body.classList.toggle("zen-mode", state.isZen);
-  if (state.isZen) {
-    const t = I18N[state.lang];
-    showToast(t.zenToast);
-  }
-}
-
-$("btnZenToggle").addEventListener("click", toggleZenMode);
-$("btnExitZen").addEventListener("click", toggleZenMode);
-
-/* ==================================================================
-   GESTIONE TEMI
-   ================================================================== */
-function applyTheme(t) {
-  state.theme = t;
-  document.documentElement.setAttribute("data-theme", t);
-  localStorage.setItem(K_THEME, t);
-  document.querySelectorAll("[data-set-theme]").forEach(b => {
-    b.classList.toggle("active", b.dataset.setTheme === t);
-  });
-}
-
-document.querySelectorAll("[data-set-theme]").forEach(b => {
-  b.addEventListener("click", () => {
-    applyTheme(b.dataset.setTheme);
-    $("themeDropdown").classList.remove("show");
-  });
-});
-
-$("btnThemeMenu").addEventListener("click", e => {
-  e.stopPropagation();
-  $("themeDropdown").classList.toggle("show");
 });
 
 /* ==================================================================
