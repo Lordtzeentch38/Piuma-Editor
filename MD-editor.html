@@ -500,11 +500,10 @@ button { cursor: pointer; border: none; background: none; }
   padding: 0 16px;
   gap: 4px;
   flex-shrink: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
-  z-index: 20;
+  overflow: visible;
+  position: relative;
+  z-index: 60;
 }
-.toolbar-wrap::-webkit-scrollbar { display: none; }
 .tb-btn {
   height: 32px;
   min-width: 32px;
@@ -518,7 +517,7 @@ button { cursor: pointer; border: none; background: none; }
   transition: 0.15s;
   position: relative;
 }
-.tb-btn:hover { color: var(--text-hi); background: var(--bg-surface-2); }
+.tb-btn:hover { color: var(--text-hi); background: var(--bg-surface-2); z-index: 100; }
 .tb-btn svg { width: 16px; height: 16px; }
 .tb-btn .tg { font-weight: 800; font-size: 13px; }
 .tb-btn .ti { font-style: italic; font-family: var(--font-display); font-size: 15px; }
@@ -529,7 +528,7 @@ button { cursor: pointer; border: none; background: none; }
 /* ==================================================================
    TOOLTIP UNIVERSALI - POSIZIONATI IN BASSO SOTTO I PULSANTI
    ================================================================== */
-.tb-btn::after, .icon-btn::after, .brand-wrap::after, .doc-btn[data-tip]::after, .goal-badge::after {
+.tb-btn::after, .icon-btn::after, .brand-wrap::after, .doc-btn[data-tip]::after, .goal-badge::after, .mode-btn[data-tip]::after {
   content: attr(data-tip);
   position: absolute;
   left: 50%;
@@ -547,11 +546,12 @@ button { cursor: pointer; border: none; background: none; }
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
-  transition: 0.18s ease 0.15s;
+  transition: opacity 0.18s ease 0.1s, transform 0.18s ease 0.1s;
   box-shadow: 0 10px 24px rgba(0,0,0,0.6);
-  z-index: 250;
+  z-index: 300;
 }
-.tb-btn:hover::after, .icon-btn:hover::after, .brand-wrap:hover::after, .doc-btn[data-tip]:hover::after, .goal-badge:hover::after {
+.icon-btn:hover, .mode-btn:hover { z-index: 100; }
+.tb-btn:hover::after, .icon-btn:hover::after, .brand-wrap:hover::after, .doc-btn[data-tip]:hover::after, .goal-badge:hover::after, .mode-btn[data-tip]:hover::after {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
