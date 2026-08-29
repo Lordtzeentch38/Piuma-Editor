@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it" data-theme="paper">
+<html lang="en" data-theme="paper">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -1699,7 +1699,7 @@ let state = {
   activeDocId: null,
   theme: "paper",
   goalWords: 500,
-  lang: "it", // it | en
+  lang: "en", // default: en
   mode: "split", // write | split | read
   isZen: false,
   saveTimer: null,
@@ -1709,153 +1709,6 @@ let state = {
 
 /* ---------- DIZIONARIO MULTILINGUA (i18n) ---------- */
 const I18N = {
-  it: {
-    langBtn: "IT",
-    langTip: "Lingua: Italiano (Clicca per English)",
-    brandTip: "Visita il Repository GitHub di Piuma",
-    docTitlePlaceholder: "Titolo documento...",
-    docTitleTip: "Titolo del documento · Clicca per modificare o rinominare",
-    editorPlaceholder: "Inizia a scrivere qui il tuo documento Markdown...",
-    modeWrite: "Scrivi",
-    modeWriteTip: "Solo Editor di Scrittura",
-    modeSplit: "Affiancato",
-    modeSplitTip: "Editor e Anteprima Affiancati",
-    modeRead: "Leggi",
-    modeReadTip: "Solo Anteprima di Lettura",
-    saveDiskTip: "Salva su Disco (Ctrl+S)",
-    findToggleTip: "Trova e Sostituisci (Ctrl+F)",
-    tocToggleTip: "Indice Documento (TOC)",
-    zenToggleTip: "Modalità Focus Zen (F11)",
-    themeMenuTip: "Cambia Tema di Colori",
-    exportMenuTip: "Esporta / Condividi Documento",
-    openLocalTip: "Apri file locale da disco (.md)",
-    helpModalTip: "Manuale d'Uso & Guida Rapida",
-    aboutModalTip: "Informazioni, Autore & Licenza",
-    toggleSidebarTip: "Mostra/Nascondi Documenti",
-    newDocTip: "Crea Nuovo File",
-    searchDocsPlaceholder: "Cerca tra i documenti...",
-    sidebarTitle: "I Miei Documenti",
-    importTokenBtn: "Importa da Link / Token",
-    backupJsonBtn: "Backup JSON",
-    restoreBackupBtn: "Ripristina",
-    restoreBackupTip: "Ripristina documenti da file JSON",
-    exportAllTip: "Esporta tutti i documenti in formato JSON",
-
-    // Dropdown Esportazioni
-    actShareUrl: "<strong>Copia Link / Token Condivisione</strong>",
-    actImportToken: "Importa da Token / Link",
-    actDownloadMd: "Salva con nome (.md)",
-    actDownloadHtml: "Scarica HTML Standalone",
-    actPrintPdf: "Stampa / Salva in PDF",
-    actCopyMd: "Copia Markdown",
-    actCopyRichText: "Copia come Rich Text (Word/Docs)",
-
-    // Temi
-    themePaper: "📜 Carta & Inchiostro",
-    themeDark: "🌌 Notte / Obsidian",
-    themeMint: "🌿 Aurora Mint",
-    themeSepia: "📖 Sepia Libri",
-
-    // Tooltip Barra Formattazione
-    h1Tip: "Titolo Principale (H1)",
-    h2Tip: "Sottotitolo (H2)",
-    h3Tip: "Intestazione Minore (H3)",
-    boldTip: "Testo in Grassetto (Ctrl+B)",
-    italicTip: "Testo in Corsivo (Ctrl+I)",
-    strikeTip: "Testo Barrato (~~testo~~)",
-    markTip: "Testo Evidenziato (==testo==)",
-    quoteTip: "Citazione a Blocco (> citazione)",
-    codeTip: "Codice Inline (`codice`)",
-    codeblockTip: "Blocco di Codice Multiriga",
-    mathTip: "Formula Matematica KaTeX ($formula$)",
-    mermaidTip: "Diagramma di Flusso Mermaid",
-    linkTip: "Inserisci Link (Ctrl+K)",
-    imageTip: "Inserisci Immagine",
-    tableTip: "Tabella Markdown",
-    ulTip: "Elenco Puntato (- elemento)",
-    olTip: "Elenco Numerato (1. elemento)",
-    taskTip: "Checklist Interattiva (- [ ] elemento)",
-    calloutNoteTip: "Callout Box Nota",
-    calloutTipTip: "Callout Box Suggerimento",
-    calloutWarningTip: "Callout Box Avviso",
-
-    // Trova e Sostituisci
-    findPlaceholder: "Trova...",
-    replacePlaceholder: "Sostituisci con...",
-    replaceBtn: "Sostituisci",
-    replaceAllBtn: "Tutto",
-    prevMatchTip: "Precedente (Shift+F3)",
-    nextMatchTip: "Successivo (F3)",
-    closeFrTip: "Chiudi barra",
-    replaceCount: (c, t) => `${c} di ${t}`,
-
-    // TOC
-    tocTitle: "Indice Documento",
-    tocEmpty: "Nessuna intestazione trovata.",
-    tocCloseTip: "Chiudi indice",
-
-    // Barra di Stato
-    saved: "Salvato",
-    saving: "Salvataggio...",
-    wordsCount: (w) => `${w.toLocaleString("it-IT")} ${w === 1 ? "parola" : "parole"}`,
-    charsCount: (c) => `${c.toLocaleString("it-IT")} caratteri`,
-    readTime: (m) => m ? `≈ ${m} min lettura` : "—",
-    targetGoal: (w, g, pct) => `Target: ${w}/${g} (${pct}%)`,
-    setGoalPrompt: "Imposta il tuo obiettivo di parole per questa sessione:",
-    setGoalToast: (g) => `Obiettivo aggiornato a ${g} parole`,
-    setGoalTip: "Clicca per impostare obiettivo parole",
-
-    // Modali
-    importModalTitle: "Importa da Link o Token",
-    importModalDesc: "Incolla qui un link <code>piuma://...</code>, un URL web <code>https://...#doc=...</code> oppure un token <code>PIUMA:...</code> per aprire il documento condiviso.",
-    importModalPlaceholder: "Incolla link o token...",
-    importModalCancel: "Annulla",
-    importModalConfirm: "Importa Documento",
-
-    aboutModalTitle: "Piuma Pro · Informazioni",
-    aboutAppName: "Piuma Pro · Markdown Editor",
-    aboutAppVer: "Versione 2.0.0 (Web & Desktop)",
-    aboutAuthor: "Autore:",
-    aboutPurposeTitle: "A cosa serve Piuma?",
-    aboutPurposeDesc: "Piuma è un editor Markdown professionale, leggero e privo di distrazioni. È stato progettato per offrire un'esperienza di scrittura pura e fluida per appunti, documentazione tecnica, articoli e testi scientifici, integrando supporto nativo a formule KaTeX, diagrammi Mermaid, checklist interattive, syntax highlighting e condivisione serverless.",
-    aboutLicenseTitle: "Licenza d'Uso & Condizioni:",
-    aboutLicenseDesc: "Questo software è gratuito e liberamente utilizzabile, copiabile, distribuibile e modificabile per scopi personali o commerciali.<br><strong>Condizione obbligatoria:</strong> è necessario citare sempre il nome dell'autore originario (<strong style='color:var(--text-hi)'>Russo Alessandro</strong>) e inserire il link alla <a href='https://github.com/Lordtzeentch38/Piuma-Editor' target='_blank' rel='noopener' style='font-weight:700'>fonte originale su GitHub</a>.",
-    aboutGotIt: "Ho capito",
-
-    helpModalTitle: "Manuale d'Uso & Guida Rapida",
-    helpShortcutsTitle: "⌨️ Scorciatoie da Tastiera",
-    helpSyntaxTitle: "✍️ Sintassi Markdown & Funzionalità Speciali",
-    helpSharingTitle: "🔗 Condivisione & Modalità Desktop / Web",
-    helpCloseBtn: "Chiudi Manuale",
-    zenToast: "Modalità Zen attiva · Premi Esc per uscire",
-
-    // Toasts, avvisi & azioni
-    docLoadedToast: "Documento caricato",
-    docCreatedToast: "Nuovo documento creato ✓",
-    docDeletedToast: "Documento eliminato",
-    docDuplicatedToast: "Documento duplicato ✓",
-    deleteConfirm: "Sei sicuro di voler eliminare questo documento?",
-    cannotDeleteOnlyDoc: "Non puoi eliminare l'unico documento rimasto.",
-    shareLinkCopiedDesktop: "Link Desktop piuma:// copiato! 🔗",
-    shareLinkCopiedWeb: "Link compresso copiato negli appunti! 🔗",
-    fileSavedToast: "File salvato su disco ✓",
-    fileSavedSuccessToast: "File salvato con successo ✓",
-    htmlExportedToast: "HTML Standalone generato ✓",
-    mdCopiedToast: "Markdown copiato negli appunti ✓",
-    richTextCopiedToast: "Rich Text copiato! Pronto per Word / Google Docs ✓",
-    imagePastedToast: "Immagine incollata ✓",
-    imageInsertedToast: "Immagine inserita ✓",
-    replaceCompleteToast: "Sostituzione completata ✓",
-    backupExportedToast: "Backup JSON esportato ✓",
-    backupRestoredToast: "Backup ripristinato con successo ✓",
-    backupErrorAlert: "Errore nel file di backup JSON.",
-    invalidTokenAlert: "Token o Link non valido. Assicurati di aver incollato la stringa corretta.",
-    duplicateTip: "Duplica",
-    deleteTip: "Elimina",
-    copyBtnLabel: "Copia",
-    copiedBtnLabel: "Copiato!",
-    emptyDocMsg: "Il documento è vuoto."
-  },
   en: {
     langBtn: "EN",
     langTip: "Language: English (Click for Italiano)",
@@ -2002,6 +1855,153 @@ const I18N = {
     copyBtnLabel: "Copy",
     copiedBtnLabel: "Copied!",
     emptyDocMsg: "The document is empty."
+  },
+  it: {
+    langBtn: "IT",
+    langTip: "Lingua: Italiano (Clicca per English)",
+    brandTip: "Visita il Repository GitHub di Piuma",
+    docTitlePlaceholder: "Titolo documento...",
+    docTitleTip: "Titolo del documento · Clicca per modificare o rinominare",
+    editorPlaceholder: "Inizia a scrivere qui il tuo documento Markdown...",
+    modeWrite: "Scrivi",
+    modeWriteTip: "Solo Editor di Scrittura",
+    modeSplit: "Affiancato",
+    modeSplitTip: "Editor e Anteprima Affiancati",
+    modeRead: "Leggi",
+    modeReadTip: "Solo Anteprima di Lettura",
+    saveDiskTip: "Salva su Disco (Ctrl+S)",
+    findToggleTip: "Trova e Sostituisci (Ctrl+F)",
+    tocToggleTip: "Indice Documento (TOC)",
+    zenToggleTip: "Modalità Focus Zen (F11)",
+    themeMenuTip: "Cambia Tema di Colori",
+    exportMenuTip: "Esporta / Condividi Documento",
+    openLocalTip: "Apri file locale da disco (.md)",
+    helpModalTip: "Manuale d'Uso & Guida Rapida",
+    aboutModalTip: "Informazioni, Autore & Licenza",
+    toggleSidebarTip: "Mostra/Nascondi Documenti",
+    newDocTip: "Crea Nuovo File",
+    searchDocsPlaceholder: "Cerca tra i documenti...",
+    sidebarTitle: "I Miei Documenti",
+    importTokenBtn: "Importa da Link / Token",
+    backupJsonBtn: "Backup JSON",
+    restoreBackupBtn: "Ripristina",
+    restoreBackupTip: "Ripristina documenti da file JSON",
+    exportAllTip: "Esporta tutti i documenti in formato JSON",
+
+    // Dropdown Esportazioni
+    actShareUrl: "<strong>Copia Link / Token Condivisione</strong>",
+    actImportToken: "Importa da Token / Link",
+    actDownloadMd: "Salva con nome (.md)",
+    actDownloadHtml: "Scarica HTML Standalone",
+    actPrintPdf: "Stampa / Salva in PDF",
+    actCopyMd: "Copia Markdown",
+    actCopyRichText: "Copia come Rich Text (Word/Docs)",
+
+    // Temi
+    themePaper: "📜 Carta & Inchiostro",
+    themeDark: "🌌 Notte / Obsidian",
+    themeMint: "🌿 Aurora Mint",
+    themeSepia: "📖 Sepia Libri",
+
+    // Tooltip Barra Formattazione
+    h1Tip: "Titolo Principale (H1)",
+    h2Tip: "Sottotitolo (H2)",
+    h3Tip: "Intestazione Minore (H3)",
+    boldTip: "Testo in Grassetto (Ctrl+B)",
+    italicTip: "Testo in Corsivo (Ctrl+I)",
+    strikeTip: "Testo Barrato (~~testo~~)",
+    markTip: "Testo Evidenziato (==testo==)",
+    quoteTip: "Citazione a Blocco (> citazione)",
+    codeTip: "Codice Inline (`codice`)",
+    codeblockTip: "Blocco di Codice Multiriga",
+    mathTip: "Formula Matematica KaTeX ($formula$)",
+    mermaidTip: "Diagramma di Flusso Mermaid",
+    linkTip: "Inserisci Link (Ctrl+K)",
+    imageTip: "Inserisci Immagine",
+    tableTip: "Tabella Markdown",
+    ulTip: "Elenco Puntato (- elemento)",
+    olTip: "Elenco Numerato (1. elemento)",
+    taskTip: "Checklist Interattiva (- [ ] elemento)",
+    calloutNoteTip: "Callout Box Nota",
+    calloutTipTip: "Callout Box Suggerimento",
+    calloutWarningTip: "Callout Box Avviso",
+
+    // Trova e Sostituisci
+    findPlaceholder: "Trova...",
+    replacePlaceholder: "Sostituisci con...",
+    replaceBtn: "Sostituisci",
+    replaceAllBtn: "Tutto",
+    prevMatchTip: "Precedente (Shift+F3)",
+    nextMatchTip: "Successivo (F3)",
+    closeFrTip: "Chiudi barra",
+    replaceCount: (c, t) => `${c} di ${t}`,
+
+    // TOC
+    tocTitle: "Indice Documento",
+    tocEmpty: "Nessuna intestazione trovata.",
+    tocCloseTip: "Chiudi indice",
+
+    // Barra di Stato
+    saved: "Salvato",
+    saving: "Salvataggio...",
+    wordsCount: (w) => `${w.toLocaleString("it-IT")} ${w === 1 ? "parola" : "parole"}`,
+    charsCount: (c) => `${c.toLocaleString("it-IT")} caratteri`,
+    readTime: (m) => m ? `≈ ${m} min lettura` : "—",
+    targetGoal: (w, g, pct) => `Target: ${w}/${g} (${pct}%)`,
+    setGoalPrompt: "Imposta il tuo obiettivo di parole per questa sessione:",
+    setGoalToast: (g) => `Obiettivo aggiornato a ${g} parole`,
+    setGoalTip: "Clicca per impostare obiettivo parole",
+
+    // Modali
+    importModalTitle: "Importa da Link o Token",
+    importModalDesc: "Incolla qui un link <code>piuma://...</code>, un URL web <code>https://...#doc=...</code> oppure un token <code>PIUMA:...</code> per aprire il documento condiviso.",
+    importModalPlaceholder: "Incolla link o token...",
+    importModalCancel: "Annulla",
+    importModalConfirm: "Importa Documento",
+
+    aboutModalTitle: "Piuma Pro · Informazioni",
+    aboutAppName: "Piuma Pro · Markdown Editor",
+    aboutAppVer: "Versione 2.0.0 (Web & Desktop)",
+    aboutAuthor: "Autore:",
+    aboutPurposeTitle: "A cosa serve Piuma?",
+    aboutPurposeDesc: "Piuma è un editor Markdown professionale, leggero e privo di distrazioni. È stato progettato per offrire un'esperienza di scrittura pura e fluida per appunti, documentazione tecnica, articoli e testi scientifici, integrando supporto nativo a formule KaTeX, diagrammi Mermaid, checklist interattive, syntax highlighting e condivisione serverless.",
+    aboutLicenseTitle: "Licenza d'Uso & Condizioni:",
+    aboutLicenseDesc: "Questo software è gratuito e liberamente utilizzabile, copiabile, distribuibile e modificabile per scopi personali o commerciali.<br><strong>Condizione obbligatoria:</strong> è necessario citare sempre il nome dell'autore originario (<strong style='color:var(--text-hi)'>Russo Alessandro</strong>) e inserire il link alla <a href='https://github.com/Lordtzeentch38/Piuma-Editor' target='_blank' rel='noopener' style='font-weight:700'>fonte originale su GitHub</a>.",
+    aboutGotIt: "Ho capito",
+
+    helpModalTitle: "Manuale d'Uso & Guida Rapida",
+    helpShortcutsTitle: "⌨️ Scorciatoie da Tastiera",
+    helpSyntaxTitle: "✍️ Sintassi Markdown & Funzionalità Speciali",
+    helpSharingTitle: "🔗 Condivisione & Modalità Desktop / Web",
+    helpCloseBtn: "Chiudi Manuale",
+    zenToast: "Modalità Zen attiva · Premi Esc per uscire",
+
+    // Toasts, avvisi & azioni
+    docLoadedToast: "Documento caricato",
+    docCreatedToast: "Nuovo documento creato ✓",
+    docDeletedToast: "Documento eliminato",
+    docDuplicatedToast: "Documento duplicato ✓",
+    deleteConfirm: "Sei sicuro di voler eliminare questo documento?",
+    cannotDeleteOnlyDoc: "Non puoi eliminare l'unico documento rimasto.",
+    shareLinkCopiedDesktop: "Link Desktop piuma:// copiato! 🔗",
+    shareLinkCopiedWeb: "Link compresso copiato negli appunti! 🔗",
+    fileSavedToast: "File salvato su disco ✓",
+    fileSavedSuccessToast: "File salvato con successo ✓",
+    htmlExportedToast: "HTML Standalone generato ✓",
+    mdCopiedToast: "Markdown copiato negli appunti ✓",
+    richTextCopiedToast: "Rich Text copiato! Pronto per Word / Google Docs ✓",
+    imagePastedToast: "Immagine incollata ✓",
+    imageInsertedToast: "Immagine inserita ✓",
+    replaceCompleteToast: "Sostituzione completata ✓",
+    backupExportedToast: "Backup JSON esportato ✓",
+    backupRestoredToast: "Backup ripristinato con successo ✓",
+    backupErrorAlert: "Errore nel file di backup JSON.",
+    invalidTokenAlert: "Token o Link non valido. Assicurati di aver incollato la stringa corretta.",
+    duplicateTip: "Duplica",
+    deleteTip: "Elimina",
+    copyBtnLabel: "Copia",
+    copiedBtnLabel: "Copiato!",
+    emptyDocMsg: "Il documento è vuoto."
   }
 };
 
@@ -2275,10 +2275,10 @@ function renderImportModalContent(lang) {
 }
 
 /* ==================================================================
-   APPLICA LINGUA ALL'INTERA APPLICAZIONE (UI & TOOLTIPS)
+   APPLICA LINGUA ALL'INTERA APPLICAZIONE (UI & TOOLTIPS & DOCS)
    ================================================================== */
 function applyLanguage(lang, isInitial = false) {
-  state.lang = lang || "it";
+  state.lang = lang || "en";
   localStorage.setItem(K_LANG, state.lang);
   document.documentElement.setAttribute("lang", state.lang);
   const t = I18N[state.lang];
@@ -2388,10 +2388,31 @@ function applyLanguage(lang, isInitial = false) {
   renderHelpModalContent(state.lang);
   renderImportModalContent(state.lang);
 
-  // 12. Rilancio statistiche e liste
+  // 12. Traduzione Documento di Benvenuto (se presente)
+  let welcomeUpdated = false;
+  state.docs.forEach(d => {
+    if (d.isWelcomeDoc || d.id === "doc_welcome" || d.title === "Benvenuto in Piuma Pro" || d.title === "Welcome to Piuma Pro" || d.content === SAMPLE_DOC_IT || d.content === SAMPLE_DOC_EN) {
+      d.isWelcomeDoc = true;
+      d.title = state.lang === "it" ? "Benvenuto in Piuma Pro" : "Welcome to Piuma Pro";
+      d.content = state.lang === "it" ? SAMPLE_DOC_IT : SAMPLE_DOC_EN;
+      welcomeUpdated = true;
+    }
+  });
+
+  if (welcomeUpdated) {
+    saveStorage();
+    const activeDoc = getActiveDoc();
+    if (activeDoc && activeDoc.isWelcomeDoc) {
+      editor.value = activeDoc.content;
+      docTitle.value = activeDoc.title;
+    }
+  }
+
+  // 13. Rilancio statistiche e liste
   updateStats();
   renderDocsList($("searchDocs").value);
   renderTOC();
+  renderPreview();
 }
 
 /* ==================================================================
@@ -2408,17 +2429,18 @@ function loadStorage() {
     state.activeDocId = localStorage.getItem(K_ACTIVE_ID);
     state.theme = localStorage.getItem(K_THEME) || "paper";
     state.goalWords = parseInt(localStorage.getItem(K_GOAL) || "500", 10);
-    state.lang = localStorage.getItem(K_LANG) || "it";
+    state.lang = localStorage.getItem(K_LANG) || "en";
   } catch (e) {
     state.docs = [];
   }
 
   if (state.docs.length === 0) {
-    const isEn = state.lang === "en";
+    const isIt = state.lang === "it";
     const initialDoc = {
-      id: generateId(),
-      title: isEn ? "Welcome to Piuma Pro" : "Benvenuto in Piuma Pro",
-      content: isEn ? SAMPLE_DOC_EN : SAMPLE_DOC_IT,
+      id: "doc_welcome",
+      title: isIt ? "Benvenuto in Piuma Pro" : "Welcome to Piuma Pro",
+      content: isIt ? SAMPLE_DOC_IT : SAMPLE_DOC_EN,
+      isWelcomeDoc: true,
       updatedAt: Date.now(),
       filePath: null
     };
@@ -2463,6 +2485,7 @@ function createNewDocument(title = null, content = "", filePath = null) {
     id: generateId(),
     title: docTitleText,
     content: content || "# " + docTitleText + "\n\n" + (state.lang === "en" ? "Start writing here..." : "Inizia a scrivere qui..."),
+    isWelcomeDoc: false,
     updatedAt: Date.now(),
     filePath: filePath
   };
@@ -2503,6 +2526,7 @@ function duplicateDocument(id, e) {
     id: generateId(),
     title: target.title + (state.lang === "en" ? " (Copy)" : " (Copia)"),
     content: target.content,
+    isWelcomeDoc: false,
     updatedAt: Date.now(),
     filePath: null
   };
@@ -3530,6 +3554,7 @@ function importDocFromUrlOrToken(raw) {
       id: generateId(),
       title: (parsed.title || (state.lang === "en" ? "Shared Document" : "Documento Condiviso")) + " 🔗",
       content: parsed.content || "",
+      isWelcomeDoc: false,
       updatedAt: Date.now(),
       filePath: null
     };
@@ -3737,7 +3762,7 @@ $("btnSetGoal").addEventListener("click", () => {
 /* Evento Switch Lingua IT / EN */
 if ($("btnLangToggle")) {
   $("btnLangToggle").addEventListener("click", () => {
-    const nextLang = state.lang === "it" ? "en" : "it";
+    const nextLang = state.lang === "en" ? "it" : "en";
     applyLanguage(nextLang);
     showToast(nextLang === "en" ? "Language switched to English 🇬🇧" : "Lingua impostata su Italiano 🇮🇹");
   });
@@ -3840,5 +3865,6 @@ function showToast(msg) {
   setViewMode("split");
 })();
 </script>
+
 </body>
 </html>
