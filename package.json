@@ -8,7 +8,10 @@
   "scripts": {
     "start": "electron .",
     "build:win": "electron-builder --win --x64",
-    "build:dir": "electron-builder --dir"
+    "build:dir": "electron-builder --dir",
+    "tauri": "tauri",
+    "tauri:dev": "node scripts/prepare_web.js && tauri dev",
+    "tauri:build": "node scripts/prepare_web.js && tauri build"
   },
   "build": {
     "appId": "com.piuma.editor",
@@ -42,6 +45,7 @@
     ]
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^2.11.4",
     "electron": "^44.0.0",
     "electron-builder": "^26.15.3"
   }
