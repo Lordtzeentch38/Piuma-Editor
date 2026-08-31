@@ -84,6 +84,13 @@ function createWindow() {
     return { action: "deny" };
   });
 
+  mainWindow.webContents.on("will-navigate", (event, url) => {
+    if (url.startsWith("http:") || url.startsWith("https:")) {
+      event.preventDefault();
+      shell.openExternal(url);
+    }
+  });
+
   mainWindow.on("closed", () => {
     mainWindow = null;
   });

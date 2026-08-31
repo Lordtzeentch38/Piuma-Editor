@@ -2444,11 +2444,35 @@ const tokenInput = $("tokenInput");
 const filePathDisplay = $("filePathDisplay");
 const brandLogo = $("brandLogo");
 
-/* Click Logo: apri repository GitHub */
-brandLogo.addEventListener("click", e => {
-  if (isDesktop && window.electronAPI && window.electronAPI.openExternal) {
-    e.preventDefault();
-    window.electronAPI.openExternal(GITHUB_REPO_URL);
+/* Apertura Link Esterni Universale (Web, Electron & Tauri) */
+document.addEventListener("click", e => {
+  const a = e.target.closest("a");
+  if (!a) return;
+  const href = a.getAttribute("href") || a.href;
+  if (!href) return;
+
+  if (href.startsWith("http://") || href.startsWith("https://")) {
+    // Electron Desktop
+    if (isDesktop && window.electronAPI && window.electronAPI.openExternal) {
+      e.preventDefault();
+      window.electronAPI.openExternal(href);
+      return;
+    }
+
+    // Tauri Desktop
+    if (window.__TAURI_INTERNALS__ || window.__TAURI__) {
+      e.preventDefault();
+      try {
+        if (window.__TAURI_INTERNALS__ && window.__TAURI_INTERNALS__.invoke) {
+          window.__TAURI_INTERNALS__.invoke("open_external_url", { url: href });
+        } else if (window.__TAURI__ && window.__TAURI__.core && window.__TAURI__.core.invoke) {
+          window.__TAURI__.core.invoke("open_external_url", { url: href });
+        }
+      } catch (err) {
+        console.error("Tauri open URL error:", err);
+      }
+      return;
+    }
   }
 });
 

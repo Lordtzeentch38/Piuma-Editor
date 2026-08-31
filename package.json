@@ -20,6 +20,16 @@
     "directories": {
       "output": "dist"
     },
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html",
+      "assets/**/*",
+      "!src-tauri/**/*",
+      "!dist_tauri/**/*",
+      "!scripts/**/*",
+      "!src_web/**/*"
+    ],
     "win": {
       "target": [
         "nsis",
