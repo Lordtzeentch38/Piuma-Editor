@@ -1643,13 +1643,13 @@ body.zen-mode .zen-exit-btn { display: block; }
     </button>
 
     <!-- Brand Logo Cliccabile con Animazione e Tooltip -->
-    <div class="brand-wrap" id="brandLogo" data-tip="Visita il Repository GitHub di Piuma">
+    <a href="https://github.com/Lordtzeentch38/Piuma-Editor" target="_blank" rel="noopener noreferrer" class="brand-wrap" id="brandLogo" data-tip="Visita il Repository GitHub di Piuma" style="text-decoration:none;color:inherit;">
       <span class="brand-chip">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/><path d="M16 8 2 22"/><path d="M17.5 15H9"/></svg>
       </span>
       <span class="brand-name">Piuma Pro</span>
       <span class="env-badge" id="envBadge">Web</span>
-    </div>
+    </a>
 
     <input type="text" class="doc-title-input" id="docTitle" placeholder="Titolo documento..." aria-label="Titolo documento" data-tip="Titolo del documento · Clicca per modificare o rinominare">
 
@@ -2445,11 +2445,10 @@ const filePathDisplay = $("filePathDisplay");
 const brandLogo = $("brandLogo");
 
 /* Click Logo: apri repository GitHub */
-brandLogo.addEventListener("click", () => {
+brandLogo.addEventListener("click", e => {
   if (isDesktop && window.electronAPI && window.electronAPI.openExternal) {
+    e.preventDefault();
     window.electronAPI.openExternal(GITHUB_REPO_URL);
-  } else {
-    window.open(GITHUB_REPO_URL, "_blank", "noopener");
   }
 });
 
